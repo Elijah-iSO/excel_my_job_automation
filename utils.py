@@ -12,7 +12,7 @@ def get_osv_number(file):
         return None
 
 
-def save_result(file, df):
+def save_result(df, file):
     if file.endswith('xls'):  # pandas не сохраняет старый формат
         file = file.replace('xls', 'xlsx')
     df.to_excel(f'{OUTPUT_DIR}{file}', index=False)

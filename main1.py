@@ -64,7 +64,7 @@ if __name__ == '__main__':
         overdue_receivable = get_overdue_receivable(dataframe)
 
         # 4 наводим красоту и сохраняем результат
-        if top_10_counterparts:
+        if type(top_10_counterparts) is pd.DataFrame:
             save_result(top_10_counterparts, file)
-        if overdue_receivable:
+        if type(overdue_receivable) is pd.DataFrame:
             save_result(overdue_receivable, file)
