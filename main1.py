@@ -2,8 +2,10 @@ import re
 
 import pandas as pd
 
-from constants import (K, KK, COLUMN_TITLES_DZ, COLUMN_TITLES_TOP_10, END_PATTERN,
-                       FILES, INN_PATTERN, INPUT_DIR, PERCENT, START_PATTERN)
+from constants import (AV_VA_PATTERN, K, KK, COLUMN_TITLES_DZ,
+                       COLUMN_TITLES_TOP_10, END_PATTERN, FILES, INPUT_DIR,
+                       OSV_DZ_PATTERN, PERCENT, START_PATTERN)
+
 from utils import get_osv_number, save_result
 
 
@@ -20,7 +22,7 @@ def get_top_10_counterparts(df, osv_number):
         first_cell_value = str(row.iloc[0])  # Значение в первом столбце
         if re.match(END_PATTERN, first_cell_value):
             capture = False
-        if capture and not re.match(INN_PATTERN, first_cell_value):  # если в ОСВ ИНН
+        if capture:
             filtered_rows.append(row)
         if re.match(START_PATTERN, first_cell_value):
             capture = True
@@ -43,9 +45,23 @@ def get_top_10_counterparts(df, osv_number):
 def get_overdue_receivable(df):
 
     data = df.fillna(0)
-    filtered_data = data.query('1')
+    end_index = len(df)
 
-    return None
+    for index, row in data.iterrows():
+        first_cell_value = str(row.iloc[0])  # Значение в первом столбце
+        if re.match(OSV_DZ_PATTERN, first_cell_value):
+            start_index = index
+        if re.match(AV_VA_PATTERN, first_cell_value):
+            end_index = index
+            break
+
+    data = data.iloc[start_index:end_index]
+    mask = (data.iloc[:, 1].astype(int) != 0) & (data.iloc[:, 4].astype(int) == 0) & (data.iloc[:, 5].astype(int) > KK)
+    filtered_df = data.loc[mask]
+    filtered_df = filtered_df.drop(filtered_df.columns[[1, 2, 3, 4, 6]], axis=1)
+    filtered_df.columns = COLUMN_TITLES_DZ
+
+    return filtered_df
 
 
 if __name__ == '__main__':
@@ -62,12 +78,12 @@ if __name__ == '__main__':
         # 3 обрабатываем данные в зависимости от номера осв
 
         # 3.1 отдельная функция для осв 60 и 62 по крупным контрагентам
-        top_10_counterparts = get_top_10_counterparts(dataframe, osv_number)
+        top_10_counterparts = get_top_10_counterparts(dataframe.copy(), osv_number)
         # 3.2 отдельная для 60/62/76 по просроченной ДЗ
-        overdue_receivable = get_overdue_receivable(dataframe)
+        overdue_receivable = get_overdue_receivable(dataframe.copy())
 
         # 4 наводим красоту и сохраняем результат
         if top_10_counterparts is not None:
-            save_result(top_10_counterparts, osv_number)
+            save_result(top_10_counterparts, osv_number, name='TOP10')
         if overdue_receivable is not None:
-            save_result(overdue_receivable)
+            save_result(overdue_receivable, osv_number, name='overdue_receivable')

@@ -14,6 +14,6 @@ def get_osv_number(file):
         return None
 
 
-def save_result(df, osv_number=None):
-    path = f'{OUTPUT_DIR}ТОП10_{osv_number}.xlsx'
+def save_result(df, osv_number=None, name=None):
+    path = f'{OUTPUT_DIR}{name}_{osv_number}.xlsx'
     df.to_excel(path, index=False)
