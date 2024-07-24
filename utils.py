@@ -1,3 +1,5 @@
+import pandas as pd
+
 from constants import OUTPUT_DIR
 
 
@@ -12,7 +14,6 @@ def get_osv_number(file):
         return None
 
 
-def save_result(df, file):
-    if file.endswith('xls'):  # pandas не сохраняет старый формат
-        file = file.replace('xls', 'xlsx')
-    df.to_excel(f'{OUTPUT_DIR}{file}', index=False)
+def save_result(df, osv_number=None):
+    path = f'{OUTPUT_DIR}ТОП10_{osv_number}.xlsx'
+    df.to_excel(path, index=False)

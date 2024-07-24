@@ -2,8 +2,8 @@ import re
 
 import pandas as pd
 
-from constants import (COLUMN_TITLES_DZ, COLUMN_TITLES_TOP_10, END_PATTERN,
-                       FILES, INN_PATTERN, INPUT_DIR, START_PATTERN)
+from constants import (K, KK, COLUMN_TITLES_DZ, COLUMN_TITLES_TOP_10, END_PATTERN,
+                       FILES, INN_PATTERN, INPUT_DIR, PERCENT, START_PATTERN)
 from utils import get_osv_number, save_result
 
 
@@ -27,21 +27,24 @@ def get_top_10_counterparts(df, osv_number):
 
     cleared_df = pd.DataFrame(filtered_rows).fillna(0)
 
-    if osv_number == '60':
-        cleared_df.drop(cleared_df.columns[1], axis=1, inplace=True)
-    else:
-        cleared_df.drop(cleared_df.columns[2], axis=1, inplace=True)
-    cleared_df.to_excel('result.xlsx', index=False)
+    column_to_drop = 1 if osv_number == '60' else 2
+    cleared_df.drop(cleared_df.columns[column_to_drop], axis=1, inplace=True)
 
-    turnover_sum = cleared_df[cleared_df.columns[1]].sum()
+    turnover_total = cleared_df[cleared_df.columns[1]].sum() / K
+    cleared_df[cleared_df.columns[1]] = cleared_df.iloc[:, 1] / K
     df_top_10 = cleared_df.sort_values(by=cleared_df.columns[1], ascending=False).head(10)
-    df_top_10['any_name'] = df_top_10[cleared_df.columns[1]] / turnover_sum * 100
+    df_top_10[COLUMN_TITLES_TOP_10[2]] = df_top_10.iloc[:, 1] / turnover_total * PERCENT
+
     df_top_10.columns = COLUMN_TITLES_TOP_10
 
     return df_top_10
 
 
-def get_overdue_receivable(dataframe):
+def get_overdue_receivable(df):
+
+    data = df.fillna(0)
+    filtered_data = data.query('1')
+
     return None
 
 
@@ -64,7 +67,7 @@ if __name__ == '__main__':
         overdue_receivable = get_overdue_receivable(dataframe)
 
         # 4 наводим красоту и сохраняем результат
-        if type(top_10_counterparts) is pd.DataFrame:
-            save_result(top_10_counterparts, file)
-        if type(overdue_receivable) is pd.DataFrame:
-            save_result(overdue_receivable, file)
+        if top_10_counterparts is not None:
+            save_result(top_10_counterparts, osv_number)
+        if overdue_receivable is not None:
+            save_result(overdue_receivable)
