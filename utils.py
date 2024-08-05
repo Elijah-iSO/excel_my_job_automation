@@ -43,7 +43,3 @@ def parce_pdf(file):
 
         # Сохраняем Excel-файл
         writer._save()
-
-        print(f"Все таблицы из файла '{file}' сохранены в файл 'all_tables.xlsx'")
-    else:
-        print("В PDF-файле не найдено таблиц.")

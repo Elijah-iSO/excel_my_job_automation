@@ -3,8 +3,8 @@ import re
 import pandas as pd
 
 from constants import (AV_VA_PATTERN, K, KK, COLUMN_TITLES_DZ,
-                       COLUMN_TITLES_TOP_10, END_PATTERN, FILES, INPUT_DIR,
-                       OSV_DZ_PATTERN, PERCENT, START_PATTERN)
+                       COLUMN_TITLES_TOP_10, END_PATTERN, FILES, FILE_HANDLERS,
+                       INPUT_DIR, OSV_DZ_PATTERN, PERCENT, START_PATTERN)
 
 from utils import get_osv_number, save_result
 
