@@ -1,5 +1,7 @@
 import os
 
+from file_processing import process_60_62_76, process_pdf, process_60_62, process_50_51_52
+
 COLUMN_TITLES_TOP_10 = [
     'Контрагенты',
     'Оборот за период, тыс. руб.',
@@ -27,8 +29,8 @@ K = 1000
 KK = 1000000
 
 FILE_HANDLERS = {
-    ('60', '62'): process_60_62,
-    ('60', '62', '76'): process_60_62_76,
-    ('50', '51', '52'): process_50_51_52,
-    ('.pdf',): process_pdf,
+    process_60_62: ('60', '62'),
+    process_60_62_76: ('60', '62', '76'),
+    process_50_51_52: ('50', '51', '52'),
+    process_pdf: ('.pdf',)
 }

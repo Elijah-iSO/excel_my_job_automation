@@ -1,11 +1,11 @@
 import re
 
+import openpyxl
 import pandas as pd
 
 from constants import (AV_VA_PATTERN, K, KK, COLUMN_TITLES_DZ,
                        COLUMN_TITLES_TOP_10, END_PATTERN, FILES, FILE_HANDLERS,
                        INPUT_DIR, OSV_DZ_PATTERN, PERCENT, START_PATTERN)
-
 from utils import get_osv_number, save_result
 
 
@@ -65,7 +65,17 @@ def get_overdue_receivable(df):
 
 
 if __name__ == '__main__':
+    result_book = openpyxl.Workbook()
+    result_book.remove(result_book['Sheet'])
+
     for file in FILES:
+        for handler, file_suffixes in FILE_HANDLERS.items():
+            if any(file_suffix in file for file_suffix in file_suffixes):
+                sheet_name = f'{file}_{handler}'
+                result_book.create_sheet(title=sheet_name)
+
+                handler(file)
+                break
 
         # 1 проверяем номер ОСВ в названии файла
         osv_number = get_osv_number(file)
