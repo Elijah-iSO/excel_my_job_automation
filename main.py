@@ -69,13 +69,11 @@ if __name__ == '__main__':
     result_book.remove(result_book['Sheet'])
 
     for file in FILES:
-        for handler, file_suffixes in FILE_HANDLERS.items():
+        for (handler, file_suffixes) in FILE_HANDLERS.items():
             if any(file_suffix in file for file_suffix in file_suffixes):
-                sheet_name = f'{file}_{handler}'
+                sheet_name = f'{file[-20:]}_{handler}'
                 result_book.create_sheet(title=sheet_name)
-
                 handler(file)
-                break
 
         # 1 проверяем номер ОСВ в названии файла
         osv_number = get_osv_number(file)
