@@ -16,10 +16,9 @@ def get_dataframe(file, file_suffix):
             pages='all',
             multiple_tables=True
         )
-        for i, table in enumerate(tables):
-            if not isinstance(table, pd.DataFrame):
-                table = pd.DataFrame(table)
-            return table
+        concat_dataframe = pd.concat(tables, ignore_index=True)
+        return concat_dataframe
+
     excel = pd.read_excel(
         f'{INPUT_DIR}{file}',
         header=None,
