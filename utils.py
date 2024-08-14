@@ -16,7 +16,7 @@ def get_dataframe(file, file_suffix):
             pages='all',
             multiple_tables=True
         )
-        concat_dataframe = pd.concat(tables, ignore_index=True)
+        concat_dataframe = pd.concat(tables, axis=1)
         return concat_dataframe
 
     excel = pd.read_excel(
